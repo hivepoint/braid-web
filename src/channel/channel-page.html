@@ -1,6 +1,102 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../braid-icons.html">
+
 <dom-module id="channel-page">
   <template>
-    <h1>Channel Page</h1>
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+      #container {
+        height: 100vh;
+      }
+
+      .fillContainer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+      }
+
+      .verticalScroll {
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      #toolbar {
+        min-height: 80px;
+        padding: 0 16px;
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-image: url('/images/mist.jpg');
+        box-shadow: 0 3px 2px -1px rgba(0, 0, 0, 0.6);
+      }
+
+      #barLogo {
+        display: block;
+        opacity: 0.8;
+      }
+
+      iron-icon {
+        cursor: pointer;
+        color: white;
+        --iron-icon-height: 32px;
+        --iron-icon-width: 32px;
+        padding: 7px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+      }
+
+      iron-icon:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      #composePanel {
+        padding: 30px 15px;
+        border-top: 1px solid #e5e5e5;
+      }
+
+      #contentPanel {
+        position: relative;
+      }
+
+      #content {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 700px) {
+        #toolbar {
+          min-height: 60px;
+        }
+        #barLogo {
+          max-width: 60px;
+        }
+      }
+    </style>
+    <div id="container" class="vertical layout">
+      <div id="toolbar" class="horizontal layout center">
+        <div>
+          <img id="barLogo" src="/images/logos/logo_white_40.png">
+        </div>
+        <div class="flex title">{{channelName}}</div>
+        <div id="toolbarButtons">
+          <iron-icon icon="braid:share" on-click="onShare"></iron-icon>
+        </div>
+      </div>
+
+      <div id="contentPanel" class="flex">
+        <div class="fillContainer verticalScroll">
+          <div id="content">
+          </div>
+        </div>
+      </div>
+
+      <div id="composePanel">
+      </div>
+
+    </div>
   </template>
   <script src="channel-page.js"></script>
 </dom-module>
