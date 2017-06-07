@@ -1,0 +1,12 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="braid-app">
+  <template>
+    <hash-router id="router" on-route-change="onRouteChange"></hash-router>
+    <div id="shell">
+      <home-page id="home" class="page home"></home-page>
+    </div>
+  </template>
+  <script src="hash-router.js"></script>
+  <script src="braid-app.js"></script>
+</dom-module>
