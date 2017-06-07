@@ -1,10 +1,12 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymer/lib/utils/import-href.html">
 
 <dom-module id="braid-app">
   <template>
     <hash-router id="router" on-route-change="onRouteChange"></hash-router>
     <div id="shell">
-      <home-page id="home" class="page home"></home-page>
+      <home-page id="home" class="page home" data-href="home/home-page.html"></home-page>
+      <channel-page class="page channel" data-href="channel/channel-page.html"></channel-page>
     </div>
   </template>
   <script src="hash-router.js"></script>
