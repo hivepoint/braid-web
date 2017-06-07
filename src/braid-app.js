@@ -6,8 +6,12 @@ class BraidApp extends Polymer.Element {
     this.lastActivePage = null;
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    window.$router = this.$.router;
+  }
+
   onRouteChange(event) {
-    console.log("Route change fired", event.detail.route);
     const route = event.detail.route;
     let pageName = route.segments[0] || "home";
 
