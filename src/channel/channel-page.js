@@ -2,26 +2,39 @@ class ChannelPage extends Polymer.Element {
   static get is() { return 'channel-page'; }
   static get properties() {
     return {
-      channelName: {
-        type: String,
-        value: "Channel Name"
-      },
-      items: Array
+      items: Array,
+      channelInfo: {
+        type: Object,
+        observer: 'refreshChannel'
+      }
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    var items = [];
-    for (var i = 0; i < 20; i++) {
-      items.push({
-        name: "John Johnson",
-        timestamp: (new Date()).getTime(),
-        data: {}
+  onActivate(route) {
+    this._active = true;
+    this.channelUrl = route.segments[1];
+    this.registryUrl = route.segments[2];
+    this.refresh(route.context);
+  }
+
+  onDeactivate() {
+    this._active = false;
+  }
+
+  refresh(info) {
+    if (info) {
+      this.set("channelInfo", info);
+    } else {
+      $channels.getChannel(this.registryUrl, this.channelUrl).then((response) => {
+        this.set("channelInfo", response);
       });
     }
-    this.set("items", items);
   }
+
+  refreshChannel() {
+    console.log("Channel info: ", this.channelInfo);
+  }
+
 }
 
 window.customElements.define(ChannelPage.is, ChannelPage);

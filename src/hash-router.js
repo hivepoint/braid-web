@@ -61,6 +61,9 @@ class HashRouter extends Polymer.Element {
       hash = hash.substring(1);
     }
     const segments = hash.split("/") || [];
+    for (var i = 1; i < segments.length; i++) {
+      segments[i] = decodeURIComponent(segments[i]);
+    }
     this.set("route", {
       segments: segments,
       context: this.context

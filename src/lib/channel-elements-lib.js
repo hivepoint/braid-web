@@ -553,7 +553,7 @@
             });
           });
         };
-        ChannelsClientImpl.prototype.getChannels = function (url) {
+        ChannelsClientImpl.prototype.getChannelsWithProvider = function (url) {
           return __awaiter(this, void 0, void 0, function () {
             var result, registry, listResponse, _i, _a, cs;
             return __generator(this, function (_b) {
@@ -635,6 +635,27 @@
                   headers = { Authorization: utils_1.Utils.createAuth(registry) };
                   return [4 /*yield*/, rest_1.Rest.get(registry.services.channelListUrl, headers)];
                 case 1: return [2 /*return*/, _a.sent()];
+              }
+            });
+          });
+        };
+        ChannelsClientImpl.prototype.getChannel = function (registryUrl, channelUrl) {
+          return __awaiter(this, void 0, void 0, function () {
+            var registry, headers;
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0: return [4 /*yield*/, this.ensureDb()];
+                case 1:
+                  _a.sent();
+                  return [4 /*yield*/, this.db.getRegistry(registryUrl)];
+                case 2:
+                  registry = _a.sent();
+                  if (!registry) {
+                    throw new Error("Failed to fetch channel: Provider is not registered");
+                  }
+                  headers = { Authorization: utils_1.Utils.createAuth(registry) };
+                  return [4 /*yield*/, rest_1.Rest.get(channelUrl, headers)];
+                case 3: return [2 /*return*/, _a.sent()];
               }
             });
           });

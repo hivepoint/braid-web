@@ -26,7 +26,6 @@ class ChannelList extends Polymer.Element {
         ]
       }
       this.set("list", list);
-      console.log("Channel list", list);
     });
   }
 }

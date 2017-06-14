@@ -28,8 +28,7 @@ class CreateChatPage extends Polymer.Element {
             name: name
           }
         }).then((channelInfo) => {
-          window.alert("Channel created");
-          console.log("channel created", channelInfo);
+          $router.goto(['channel', channelInfo.channelUrl, channelInfo.registerUrl], channelInfo);
         });
       })
     }
