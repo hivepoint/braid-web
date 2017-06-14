@@ -1,104 +1,13 @@
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <dom-module id="home-page">
   <template>
-    <style is="custom-style" include="iron-flex iron-flex-alignment">
-      .fillContainer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow: hidden;
-      }
-
-      .verticalScroll {
-        overflow-x: hidden;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .bg {
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-image: url('/images/mist.jpg');
-      }
-
-      header {
-        min-height: 100vh;
-      }
-
-      .headerImagePanel {
+    <style>
+       :host {
+        padding: 20px;
         text-align: center;
-        position: relative;
-        min-height: 225px;
-      }
-
-      .headerImage {
-        padding: 15px 10px 40px;
-      }
-
-      .headerImage img {
-        max-width: 100%;
-        box-sizing: border-box;
-        opacity: 0.7;
-      }
-
-      .headerTextPanel {
-        background: white;
-        padding: 40px 16px;
-      }
-
-      .textContent {
-        max-width: 800px;
-        margin: 0 auto;
-        font-size: 29px;
-        text-align: center;
-      }
-
-      button {
-        font-size: 22px;
-        margin: 20px 0;
-        background: #1e88e5;
-        color: white;
-        border: none;
-        font-weight: 300;
-        padding: 10px 15px;
-        font-family: inherit;
-        border-radius: 3px;
-        outline: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      button:hover {
-        box-shadow: 0 3px 3px -1px rgba(0, 0, 0, 0.4);
-      }
-
-      @media (max-width: 700px) {
-        .textContent {
-          font-size: 18px;
-        }
+        display: block;
       }
     </style>
-    <div class="fillContainer bg"></div>
-    <article class="fillContainer verticalScroll">
-      <header class="layout vertical">
-        <div class="flex headerImagePanel vertical layout">
-          <div class="flex"></div>
-          <div class="headerImage"><img src="/images/logos/logo_white_800.png" /></div>
-          <div class="flex"></div>
-        </div>
-        <div class="headerTextPanel">
-          <div class="textContent">
-            <div>Braid is a new communication platform</div>
-            <div class="createPanel">
-              <button on-click="onCreate">Create a new channel</button>
-            </div>
-          </div>
-        </div>
-      </header>
-    </article>
+    <a href="#list">List</a>
   </template>
   <script src="home-page.js"></script>
 </dom-module>

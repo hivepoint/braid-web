@@ -1,0 +1,17 @@
+<link rel="import" href="../common/x-button.html">
+<link rel="import" href="../common/x-card.html">
+<dom-module id="channel-list-page">
+  <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+      .buttons {
+        padding: 15px;
+        margin-top: 30px;
+        text-align: center;
+      }
+    </style>
+    <div class="buttons">
+      <x-button on-click="onCreate">Create a new channel</x-button>
+    </div>
+  </template>
+  <script src="channel-list-page.js"></script>
+</dom-module>

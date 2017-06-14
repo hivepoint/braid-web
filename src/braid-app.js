@@ -9,6 +9,7 @@ class BraidApp extends Polymer.Element {
   connectedCallback() {
     super.connectedCallback();
     window.$router = this.$.router;
+    window.$channels = new ChannelsClient();
   }
 
   onRouteChange(event) {
