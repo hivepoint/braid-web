@@ -1,1 +1,649 @@
-!function (e) { function t(n) { if (r[n]) return r[n].exports; var o = r[n] = { i: n, l: !1, exports: {} }; return e[n].call(o.exports, o, o.exports, t), o.l = !0, o.exports } var r = {}; t.m = e, t.c = r, t.i = function (e) { return e }, t.d = function (e, r, n) { t.o(e, r) || Object.defineProperty(e, r, { configurable: !1, enumerable: !0, get: n }) }, t.n = function (e) { var r = e && e.__esModule ? function () { return e.default } : function () { return e }; return t.d(r, "a", r), r }, t.o = function (e, t) { return Object.prototype.hasOwnProperty.call(e, t) }, t.p = "", t(t.s = 3) }([function (e, t, r) { "use strict"; var n = this && this.__awaiter || function (e, t, r, n) { return new (r || (r = Promise))(function (o, i) { function s(e) { try { a(n.next(e)) } catch (e) { i(e) } } function u(e) { try { a(n.throw(e)) } catch (e) { i(e) } } function a(e) { e.done ? o(e.value) : new r(function (t) { t(e.value) }).then(s, u) } a((n = n.apply(e, t || [])).next()) }) }, o = this && this.__generator || function (e, t) { function r(e) { return function (t) { return n([e, t]) } } function n(r) { if (o) throw new TypeError("Generator is already executing."); for (; a;)try { if (o = 1, i && (s = i[2 & r[0] ? "return" : r[0] ? "throw" : "next"]) && !(s = s.call(i, r[1])).done) return s; switch (i = 0, s && (r = [0, s.value]), r[0]) { case 0: case 1: s = r; break; case 4: return a.label++ , { value: r[1], done: !1 }; case 5: a.label++ , i = r[1], r = [0]; continue; case 7: r = a.ops.pop(), a.trys.pop(); continue; default: if (s = a.trys, !(s = s.length > 0 && s[s.length - 1]) && (6 === r[0] || 2 === r[0])) { a = 0; continue } if (3 === r[0] && (!s || r[1] > s[0] && r[1] < s[3])) { a.label = r[1]; break } if (6 === r[0] && a.label < s[1]) { a.label = s[1], s = r; break } if (s && a.label < s[2]) { a.label = s[2], a.ops.push(r); break } s[2] && a.ops.pop(), a.trys.pop(); continue }r = t.call(e, a) } catch (e) { r = [6, e], i = 0 } finally { o = s = 0 } if (5 & r[0]) throw r[1]; return { value: r[0] ? r[1] : void 0, done: !0 } } var o, i, s, u, a = { label: 0, sent: function () { if (1 & s[0]) throw s[1]; return s[1] }, trys: [], ops: [] }; return u = { next: r(0), throw: r(1), return: r(2) }, "function" == typeof Symbol && (u[Symbol.iterator] = function () { return this }), u }; Object.defineProperty(t, "__esModule", { value: !0 }); var i = function () { function e() { } return e.prototype.open = function () { return n(this, void 0, void 0, function () { var e = this; return o(this, function (t) { return [2, new Promise(function (t, r) { if (e.db) return void t(); var n = indexedDB.open("channels-db", 1); n.onerror = function (e) { console.error("Failed to load DB: ", e), r(new Error("Error loading database: " + e)) }, n.onsuccess = function (r) { e.db = n.result, t() }, n.onupgradeneeded = function (e) { var t = e.target.result; if (!e.oldVersion) { t.createObjectStore("registries", { keyPath: "services.registrationUrl" }).createIndex("providerUrl", "services.providerUrl", { unique: !0 }) } } })] }) }) }, e.prototype.getStore = function (e, t) { return this.db.transaction(e, t).objectStore(e) }, e.prototype.saveRegistry = function (e) { return n(this, void 0, void 0, function () { var t = this; return o(this, function (r) { return [2, new Promise(function (r, n) { var o = t.getStore("registries", "readwrite"); try { var i = o.add(e); i.onerror = function (e) { n(new Error("Error loading database: " + e)) }, i.onsuccess = function (e) { r() } } catch (e) { n(e) } })] }) }) }, e.prototype.getRegistry = function (e, t) { return n(this, void 0, void 0, function () { var r = this; return o(this, function (n) { return [2, new Promise(function (n, o) { var i, s = r.getStore("registries", "readonly"); if (e) i = s.get(e); else { if (!t) return void n(null); var u = s.index("providerUrl"); i = u.get(t) } i.onerror = function (e) { console.error("Failed to load registry from DB: ", e), o(new Error("Failed to load registry: " + e)) }, i.onsuccess = function (e) { n(i.result) } })] }) }) }, e }(); t.ClientDb = i }, function (e, t, r) { "use strict"; var n = this && this.__awaiter || function (e, t, r, n) { return new (r || (r = Promise))(function (o, i) { function s(e) { try { a(n.next(e)) } catch (e) { i(e) } } function u(e) { try { a(n.throw(e)) } catch (e) { i(e) } } function a(e) { e.done ? o(e.value) : new r(function (t) { t(e.value) }).then(s, u) } a((n = n.apply(e, t || [])).next()) }) }, o = this && this.__generator || function (e, t) { function r(e) { return function (t) { return n([e, t]) } } function n(r) { if (o) throw new TypeError("Generator is already executing."); for (; a;)try { if (o = 1, i && (s = i[2 & r[0] ? "return" : r[0] ? "throw" : "next"]) && !(s = s.call(i, r[1])).done) return s; switch (i = 0, s && (r = [0, s.value]), r[0]) { case 0: case 1: s = r; break; case 4: return a.label++ , { value: r[1], done: !1 }; case 5: a.label++ , i = r[1], r = [0]; continue; case 7: r = a.ops.pop(), a.trys.pop(); continue; default: if (s = a.trys, !(s = s.length > 0 && s[s.length - 1]) && (6 === r[0] || 2 === r[0])) { a = 0; continue } if (3 === r[0] && (!s || r[1] > s[0] && r[1] < s[3])) { a.label = r[1]; break } if (6 === r[0] && a.label < s[1]) { a.label = s[1], s = r; break } if (s && a.label < s[2]) { a.label = s[2], a.ops.push(r); break } s[2] && a.ops.pop(), a.trys.pop(); continue }r = t.call(e, a) } catch (e) { r = [6, e], i = 0 } finally { o = s = 0 } if (5 & r[0]) throw r[1]; return { value: r[0] ? r[1] : void 0, done: !0 } } var o, i, s, u, a = { label: 0, sent: function () { if (1 & s[0]) throw s[1]; return s[1] }, trys: [], ops: [] }; return u = { next: r(0), throw: r(1), return: r(2) }, "function" == typeof Symbol && (u[Symbol.iterator] = function () { return this }), u }; Object.defineProperty(t, "__esModule", { value: !0 }); var i = function () { function e() { } return e.get = function (t, r) { return n(this, void 0, void 0, function () { return o(this, function (n) { return [2, new Promise(function (n, o) { var i = new XMLHttpRequest; if (i.withCredentials = !0, i.open("GET", t), r) for (var s in r) i.setRequestHeader(s, r[s]); i.onload = function (t) { var r = i.status; if (0 === r || r >= 400) i.responseText ? e.onError(o, r, i.responseText) : e.onError(o, r, "Request failed with code: " + r); else if (i.responseText) { var s = JSON.parse(i.responseText); n(s) } else n(null) }, i.onerror = function (t) { e.onError(o, 0, "There was a network error: " + t.message) }, i.send() })] }) }) }, e.post = function (t, r, i) { return n(this, void 0, void 0, function () { return o(this, function (n) { return [2, new Promise(function (n, o) { var s = new XMLHttpRequest; if (s.withCredentials = !0, s.open("POST", t), i) for (var u in i) s.setRequestHeader(u, i[u]); s.setRequestHeader("Content-Type", "application/json"), s.onload = function (t) { var r = s.status; if (0 === r || r >= 400) s.responseText ? e.onError(o, r, s.responseText) : e.onError(o, r, "Request failed with code: " + r); else if (s.responseText) { var i = JSON.parse(s.responseText); n(i) } else n(null) }, s.onerror = function (t) { e.onError(o, 0, "There was a network error: " + t.message) }, r ? s.send(JSON.stringify(r)) : s.send() })] }) }) }, e.onError = function (e, t, r) { e({ status: t, message: r }) }, e }(); t.Rest = i }, function (e, t, r) { "use strict"; Object.defineProperty(t, "__esModule", { value: !0 }); var n = function () { function e() { } return e.createAuth = function (t) { var r = t.id, n = t.token; return "Basic " + e.base64([r, n].join(":")) }, e.base64 = function (e) { return btoa(e) }, e }(); t.Utils = n }, function (e, t, r) { "use strict"; var n = this && this.__awaiter || function (e, t, r, n) { return new (r || (r = Promise))(function (o, i) { function s(e) { try { a(n.next(e)) } catch (e) { i(e) } } function u(e) { try { a(n.throw(e)) } catch (e) { i(e) } } function a(e) { e.done ? o(e.value) : new r(function (t) { t(e.value) }).then(s, u) } a((n = n.apply(e, t || [])).next()) }) }, o = this && this.__generator || function (e, t) { function r(e) { return function (t) { return n([e, t]) } } function n(r) { if (o) throw new TypeError("Generator is already executing."); for (; a;)try { if (o = 1, i && (s = i[2 & r[0] ? "return" : r[0] ? "throw" : "next"]) && !(s = s.call(i, r[1])).done) return s; switch (i = 0, s && (r = [0, s.value]), r[0]) { case 0: case 1: s = r; break; case 4: return a.label++ , { value: r[1], done: !1 }; case 5: a.label++ , i = r[1], r = [0]; continue; case 7: r = a.ops.pop(), a.trys.pop(); continue; default: if (s = a.trys, !(s = s.length > 0 && s[s.length - 1]) && (6 === r[0] || 2 === r[0])) { a = 0; continue } if (3 === r[0] && (!s || r[1] > s[0] && r[1] < s[3])) { a.label = r[1]; break } if (6 === r[0] && a.label < s[1]) { a.label = s[1], s = r; break } if (s && a.label < s[2]) { a.label = s[2], a.ops.push(r); break } s[2] && a.ops.pop(), a.trys.pop(); continue }r = t.call(e, a) } catch (e) { r = [6, e], i = 0 } finally { o = s = 0 } if (5 & r[0]) throw r[1]; return { value: r[0] ? r[1] : void 0, done: !0 } } var o, i, s, u, a = { label: 0, sent: function () { if (1 & s[0]) throw s[1]; return s[1] }, trys: [], ops: [] }; return u = { next: r(0), throw: r(1), return: r(2) }, "function" == typeof Symbol && (u[Symbol.iterator] = function () { return this }), u }; Object.defineProperty(t, "__esModule", { value: !0 }); var i = r(1), s = r(2), u = r(0), a = function () { function e() { this.db = new u.ClientDb } return e.prototype.ensureDb = function () { return n(this, void 0, void 0, function () { return o(this, function (e) { switch (e.label) { case 0: return [4, this.db.open()]; case 1: return e.sent(), [2] } }) }) }, e.prototype.register = function (e, t) { return n(this, void 0, void 0, function () { var r, n, s; return o(this, function (o) { switch (o.label) { case 0: return [4, this.ensureDb()]; case 1: return o.sent(), [4, this.db.getRegistry(null, e)]; case 2: return r = o.sent(), r ? [2, r] : [4, i.Rest.get(e)]; case 3: return n = o.sent(), n && n.services.registrationUrl ? [4, this.getRegistry(n.services.registrationUrl, t)] : [3, 6]; case 4: return s = o.sent(), [4, this.db.saveRegistry(s)]; case 5: return o.sent(), [2, s]; case 6: throw new Error("Failed to fetch Braid server info.") } }) }) }, e.prototype.getRegistry = function (e, t) { return n(this, void 0, void 0, function () { var r, n; return o(this, function (o) { switch (o.label) { case 0: return [4, this.ensureDb()]; case 1: return o.sent(), [4, this.db.getRegistry(e)]; case 2: return r = o.sent(), r ? [2, r] : [4, i.Rest.post(e, { identity: t || {} })]; case 3: return n = o.sent(), n ? [4, this.db.saveRegistry(n)] : [3, 5]; case 4: return o.sent(), [2, n]; case 5: throw new Error("Failed to register with server at " + e) } }) }) }, e.prototype.createChannel = function (e, t) { return void 0 === t && (t = {}), n(this, void 0, void 0, function () { var r, n; return o(this, function (o) { switch (o.label) { case 0: return [4, this.ensureDb()]; case 1: return o.sent(), [4, this.db.getRegistry(e)]; case 2: if (!(r = o.sent())) throw new Error("Failed to create channel: Provider is not registered"); return n = { Authorization: s.Utils.createAuth(r) }, [4, i.Rest.post(r.services.createChannelUrl, t, n)]; case 3: return [2, o.sent()] } }) }) }, e.prototype.connectToChannel = function (e) { return n(this, void 0, void 0, function () { return o(this, function (e) { return [2, null] }) }) }, e }(); window.ChannelsClient = a }]);
+/******/ (function (modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if (installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+      /******/
+}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+      /******/
+};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+    /******/
+}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function (value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function (exports, name, getter) {
+/******/ 		if (!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+        /******/
+});
+      /******/
+}
+    /******/
+};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function (module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+    /******/
+};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function (object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+  /******/
+})
+/************************************************************************/
+/******/([
+/* 0 */
+/***/ (function (module, exports, __webpack_require__) {
+
+      "use strict";
+
+      var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+        return new (P || (P = Promise))(function (resolve, reject) {
+          function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+          function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+          function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+          step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+      };
+      var __generator = (this && this.__generator) || function (thisArg, body) {
+        var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+        function verb(n) { return function (v) { return step([n, v]); }; }
+        function step(op) {
+          if (f) throw new TypeError("Generator is already executing.");
+          while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+              case 0: case 1: t = op; break;
+              case 4: _.label++; return { value: op[1], done: false };
+              case 5: _.label++; y = op[1]; op = [0]; continue;
+              case 7: op = _.ops.pop(); _.trys.pop(); continue;
+              default:
+                if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                if (t[2]) _.ops.pop();
+                _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+          } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+          if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+        }
+      };
+      Object.defineProperty(exports, "__esModule", { value: true });
+      var DB_NAME = 'channels-db';
+      var DB_VERSION = 1;
+      var STORE_REGISTRIES = "registries";
+      var MODE_READWRITE = "readwrite";
+      var MODE_READ = "readonly";
+      var ClientDb = (function () {
+        function ClientDb() {
+        }
+        ClientDb.prototype.open = function () {
+          return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+              return [2 /*return*/, new Promise(function (resolve, reject) {
+                if (_this.db) {
+                  resolve();
+                  return;
+                }
+                var request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onerror = function (event) {
+                  console.error("Failed to load DB: ", event);
+                  reject(new Error("Error loading database: " + event));
+                };
+                request.onsuccess = function (event) {
+                  _this.db = request.result;
+                  resolve();
+                };
+                request.onupgradeneeded = function (event) {
+                  var db = event.target.result;
+                  if (!event.oldVersion) {
+                    var store = db.createObjectStore(STORE_REGISTRIES, { keyPath: "services.registrationUrl" });
+                    store.createIndex("providerUrl", "services.providerUrl", { unique: true });
+                  }
+                };
+              })];
+            });
+          });
+        };
+        ClientDb.prototype.getStore = function (name, mode) {
+          var tx = this.db.transaction(name, mode);
+          return tx.objectStore(name);
+        };
+        ClientDb.prototype.saveRegistry = function (registry) {
+          return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+              return [2 /*return*/, new Promise(function (resolve, reject) {
+                var store = _this.getStore(STORE_REGISTRIES, MODE_READWRITE);
+                try {
+                  var request = store.add(registry);
+                  request.onerror = function (event) {
+                    reject(new Error("Error loading database: " + event));
+                  };
+                  request.onsuccess = function (event) {
+                    resolve();
+                  };
+                }
+                catch (ex) {
+                  reject(ex);
+                }
+              })];
+            });
+          });
+        };
+        ClientDb.prototype.getRegistry = function (registerUrl, providerUrl) {
+          return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+              return [2 /*return*/, new Promise(function (resolve, reject) {
+                var store = _this.getStore(STORE_REGISTRIES, MODE_READ);
+                var request;
+                if (registerUrl) {
+                  request = store.get(registerUrl);
+                }
+                else if (providerUrl) {
+                  var index = store.index('providerUrl');
+                  request = index.get(providerUrl);
+                }
+                else {
+                  resolve(null);
+                  return;
+                }
+                request.onerror = function (event) {
+                  console.error("Failed to load registry from DB: ", event);
+                  reject(new Error("Failed to load registry: " + event));
+                };
+                request.onsuccess = function (event) {
+                  resolve(request.result);
+                };
+              })];
+            });
+          });
+        };
+        ClientDb.prototype.getAllRegistries = function () {
+          return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+              return [2 /*return*/, new Promise(function (resolve, reject) {
+                var store = _this.getStore(STORE_REGISTRIES, MODE_READ);
+                var request = store.openCursor();
+                var result = [];
+                request.onerror = function (event) {
+                  console.error("Failed to open registry cursor: ", event);
+                  reject(new Error("Failed to open registry cursor: " + event));
+                };
+                request.onsuccess = function (event) {
+                  var cursor = event.target.result;
+                  if (cursor) {
+                    result.push(cursor.value);
+                    cursor.continue();
+                  }
+                  else {
+                    resolve(result);
+                  }
+                };
+              })];
+            });
+          });
+        };
+        return ClientDb;
+      }());
+      exports.ClientDb = ClientDb;
+
+
+      /***/
+}),
+/* 1 */
+/***/ (function (module, exports, __webpack_require__) {
+
+      "use strict";
+
+      var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+        return new (P || (P = Promise))(function (resolve, reject) {
+          function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+          function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+          function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+          step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+      };
+      var __generator = (this && this.__generator) || function (thisArg, body) {
+        var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+        function verb(n) { return function (v) { return step([n, v]); }; }
+        function step(op) {
+          if (f) throw new TypeError("Generator is already executing.");
+          while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+              case 0: case 1: t = op; break;
+              case 4: _.label++; return { value: op[1], done: false };
+              case 5: _.label++; y = op[1]; op = [0]; continue;
+              case 7: op = _.ops.pop(); _.trys.pop(); continue;
+              default:
+                if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                if (t[2]) _.ops.pop();
+                _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+          } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+          if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+        }
+      };
+      Object.defineProperty(exports, "__esModule", { value: true });
+      var Rest = (function () {
+        function Rest() {
+        }
+        Rest.get = function (url, headers) {
+          return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+              return [2 /*return*/, new Promise(function (resolve, reject) {
+                var req = new XMLHttpRequest();
+                req.withCredentials = false;
+                req.open("GET", url);
+                if (headers) {
+                  for (var key in headers) {
+                    req.setRequestHeader(key, headers[key]);
+                  }
+                }
+                req.onload = function (event) {
+                  var status = req.status;
+                  if (status === 0 || status >= 400) {
+                    if (req.responseText) {
+                      Rest.onError(reject, status, req.responseText);
+                    }
+                    else {
+                      Rest.onError(reject, status, 'Request failed with code: ' + status);
+                    }
+                  }
+                  else {
+                    if (req.responseText) {
+                      var result = JSON.parse(req.responseText);
+                      resolve(result);
+                    }
+                    else {
+                      resolve(null);
+                    }
+                  }
+                };
+                req.onerror = function (err) {
+                  Rest.onError(reject, 0, "There was a network error: " + err.message);
+                };
+                req.send();
+              })];
+            });
+          });
+        };
+        Rest.post = function (url, object, headers) {
+          return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+              return [2 /*return*/, new Promise(function (resolve, reject) {
+                var req = new XMLHttpRequest();
+                req.withCredentials = false;
+                req.open("POST", url);
+                if (headers) {
+                  for (var key in headers) {
+                    req.setRequestHeader(key, headers[key]);
+                  }
+                }
+                req.setRequestHeader("Content-Type", 'application/json');
+                req.onload = function (event) {
+                  var status = req.status;
+                  if (status === 0 || status >= 400) {
+                    if (req.responseText) {
+                      Rest.onError(reject, status, req.responseText);
+                    }
+                    else {
+                      Rest.onError(reject, status, 'Request failed with code: ' + status);
+                    }
+                  }
+                  else {
+                    if (req.responseText) {
+                      var result = JSON.parse(req.responseText);
+                      resolve(result);
+                    }
+                    else {
+                      resolve(null);
+                    }
+                  }
+                };
+                req.onerror = function (err) {
+                  Rest.onError(reject, 0, "There was a network error: " + err.message);
+                };
+                if (object) {
+                  req.send(JSON.stringify(object));
+                }
+                else {
+                  req.send();
+                }
+              })];
+            });
+          });
+        };
+        Rest.onError = function (reject, code, message) {
+          reject({
+            status: code,
+            message: message
+          });
+        };
+        return Rest;
+      }());
+      exports.Rest = Rest;
+
+
+      /***/
+}),
+/* 2 */
+/***/ (function (module, exports, __webpack_require__) {
+
+      "use strict";
+
+      Object.defineProperty(exports, "__esModule", { value: true });
+      var Utils = (function () {
+        function Utils() {
+        }
+        Utils.createAuth = function (registry) {
+          var user = registry.id;
+          var pswd = registry.token;
+          return 'Basic ' + Utils.base64([user, pswd].join(':'));
+        };
+        Utils.base64 = function (input) {
+          return btoa(input);
+        };
+        return Utils;
+      }());
+      exports.Utils = Utils;
+
+
+      /***/
+}),
+/* 3 */
+/***/ (function (module, exports, __webpack_require__) {
+
+      "use strict";
+
+      var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+        return new (P || (P = Promise))(function (resolve, reject) {
+          function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+          function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+          function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+          step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+      };
+      var __generator = (this && this.__generator) || function (thisArg, body) {
+        var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+        function verb(n) { return function (v) { return step([n, v]); }; }
+        function step(op) {
+          if (f) throw new TypeError("Generator is already executing.");
+          while (_) try {
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
+            switch (op[0]) {
+              case 0: case 1: t = op; break;
+              case 4: _.label++; return { value: op[1], done: false };
+              case 5: _.label++; y = op[1]; op = [0]; continue;
+              case 7: op = _.ops.pop(); _.trys.pop(); continue;
+              default:
+                if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                if (t[2]) _.ops.pop();
+                _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+          } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+          if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+        }
+      };
+      Object.defineProperty(exports, "__esModule", { value: true });
+      var rest_1 = __webpack_require__(1);
+      var utils_1 = __webpack_require__(2);
+      var db_1 = __webpack_require__(0);
+      var ChannelsClientImpl = (function () {
+        function ChannelsClientImpl() {
+          this.db = new db_1.ClientDb();
+        }
+        ChannelsClientImpl.prototype.ensureDb = function () {
+          return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0: return [4 /*yield*/, this.db.open()];
+                case 1:
+                  _a.sent();
+                  return [2 /*return*/];
+              }
+            });
+          });
+        };
+        ChannelsClientImpl.prototype.register = function (serverUrl, identity) {
+          return __awaiter(this, void 0, void 0, function () {
+            var cached, serverInfo, response;
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0: return [4 /*yield*/, this.ensureDb()];
+                case 1:
+                  _a.sent();
+                  return [4 /*yield*/, this.db.getRegistry(null, serverUrl)];
+                case 2:
+                  cached = _a.sent();
+                  if (cached) {
+                    return [2 /*return*/, cached];
+                  }
+                  return [4 /*yield*/, rest_1.Rest.get(serverUrl)];
+                case 3:
+                  serverInfo = _a.sent();
+                  if (!(serverInfo && serverInfo.services.registrationUrl)) return [3 /*break*/, 5];
+                  return [4 /*yield*/, this.getRegistry(serverInfo.services.registrationUrl, identity)];
+                case 4:
+                  response = _a.sent();
+                  return [2 /*return*/, response];
+                case 5: throw new Error("Failed to fetch channel server info.");
+              }
+            });
+          });
+        };
+        ChannelsClientImpl.prototype.getRegistry = function (registryUrl, identity) {
+          return __awaiter(this, void 0, void 0, function () {
+            var cached, response;
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0: return [4 /*yield*/, this.ensureDb()];
+                case 1:
+                  _a.sent();
+                  return [4 /*yield*/, this.db.getRegistry(registryUrl)];
+                case 2:
+                  cached = _a.sent();
+                  if (cached) {
+                    return [2 /*return*/, cached];
+                  }
+                  return [4 /*yield*/, rest_1.Rest.post(registryUrl, {
+                    identity: identity || {}
+                  })];
+                case 3:
+                  response = _a.sent();
+                  if (!response) return [3 /*break*/, 5];
+                  return [4 /*yield*/, this.db.saveRegistry(response)];
+                case 4:
+                  _a.sent();
+                  return [2 /*return*/, response];
+                case 5: throw new Error("Failed to register with server at " + registryUrl);
+              }
+            });
+          });
+        };
+        ChannelsClientImpl.prototype.createChannel = function (registryUrl, request) {
+          if (request === void 0) { request = {}; }
+          return __awaiter(this, void 0, void 0, function () {
+            var registry, headers;
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0: return [4 /*yield*/, this.ensureDb()];
+                case 1:
+                  _a.sent();
+                  return [4 /*yield*/, this.db.getRegistry(registryUrl)];
+                case 2:
+                  registry = _a.sent();
+                  if (!registry) {
+                    throw new Error("Failed to create channel: Provider is not registered");
+                  }
+                  headers = { Authorization: utils_1.Utils.createAuth(registry) };
+                  return [4 /*yield*/, rest_1.Rest.post(registry.services.createChannelUrl, request, headers)];
+                case 3: return [2 /*return*/, _a.sent()];
+              }
+            });
+          });
+        };
+        ChannelsClientImpl.prototype.connectToChannel = function (channelCodeUrl) {
+          return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+              return [2 /*return*/, null];
+            });
+          });
+        };
+        ChannelsClientImpl.prototype.getChannels = function (url) {
+          return __awaiter(this, void 0, void 0, function () {
+            var result, registry, listResponse, _i, _a, cs;
+            return __generator(this, function (_b) {
+              switch (_b.label) {
+                case 0: return [4 /*yield*/, this.ensureDb()];
+                case 1:
+                  _b.sent();
+                  result = [];
+                  return [4 /*yield*/, this.db.getRegistry(url)];
+                case 2:
+                  registry = _b.sent();
+                  if (!!registry) return [3 /*break*/, 4];
+                  return [4 /*yield*/, this.db.getRegistry(null, url)];
+                case 3:
+                  registry = _b.sent();
+                  _b.label = 4;
+                case 4:
+                  if (!registry) return [3 /*break*/, 6];
+                  return [4 /*yield*/, this.getChannelsFromRegistry(registry)];
+                case 5:
+                  listResponse = _b.sent();
+                  if (listResponse && listResponse.channels) {
+                    for (_i = 0, _a = listResponse.channels; _i < _a.length; _i++) {
+                      cs = _a[_i];
+                      result.push(cs);
+                    }
+                  }
+                  _b.label = 6;
+                case 6: return [2 /*return*/, result];
+              }
+            });
+          });
+        };
+        ChannelsClientImpl.prototype.listAllChannels = function () {
+          return __awaiter(this, void 0, void 0, function () {
+            var registeries, result, i, registry, listResponse, _i, _a, cs;
+            return __generator(this, function (_b) {
+              switch (_b.label) {
+                case 0: return [4 /*yield*/, this.ensureDb()];
+                case 1:
+                  _b.sent();
+                  return [4 /*yield*/, this.db.getAllRegistries()];
+                case 2:
+                  registeries = _b.sent();
+                  result = [];
+                  i = 0;
+                  _b.label = 3;
+                case 3:
+                  if (!(i < registeries.length)) return [3 /*break*/, 6];
+                  registry = registeries[i];
+                  return [4 /*yield*/, this.getChannelsFromRegistry(registry)];
+                case 4:
+                  listResponse = _b.sent();
+                  if (listResponse && listResponse.channels) {
+                    for (_i = 0, _a = listResponse.channels; _i < _a.length; _i++) {
+                      cs = _a[_i];
+                      result.push(cs);
+                    }
+                  }
+                  _b.label = 5;
+                case 5:
+                  i++;
+                  return [3 /*break*/, 3];
+                case 6:
+                  result.sort(function (a, b) {
+                    return b.created - a.created;
+                  });
+                  return [2 /*return*/, result];
+              }
+            });
+          });
+        };
+        ChannelsClientImpl.prototype.getChannelsFromRegistry = function (registry) {
+          return __awaiter(this, void 0, void 0, function () {
+            var headers;
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0:
+                  headers = { Authorization: utils_1.Utils.createAuth(registry) };
+                  return [4 /*yield*/, rest_1.Rest.get(registry.services.channelListUrl, headers)];
+                case 1: return [2 /*return*/, _a.sent()];
+              }
+            });
+          });
+        };
+        return ChannelsClientImpl;
+      }());
+      window.ChannelsClient = ChannelsClientImpl;
+
+
+      /***/
+})
+/******/]);

@@ -1,11 +1,25 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="braid-icons.html">
 
 <dom-module id="braid-app">
   <template>
     <style is="custom-style" include="iron-flex iron-flex-alignment">
        :host {
         display: block;
+      }
+
+      iron-icon {
+        cursor: pointer;
+        --iron-icon-height: 32px;
+        --iron-icon-width: 32px;
+        padding: 7px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+      }
+
+      iron-icon:hover {
+        background: rgba(0, 0, 0, 0.1);
       }
 
       .fillContainer {
@@ -27,15 +41,11 @@
         height: 100vh;
         overflow: hidden;
         position: relative;
-      }
-
-      #contentPanel {
         background: #f5f5f5;
       }
 
       .toolbar {
         background: #4d867a;
-        border-bottom: 1px solid #e5e5e5;
         min-height: 60px;
         padding: 0 16px;
         color: #fff;
@@ -44,23 +54,92 @@
       .toolbar img {
         display: block;
       }
+
+      #btnMenu {
+        display: none;
+      }
+
+      #glass {
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      #leftDrawer {
+        width: 220px;
+        background: #263238;
+        transition: left 0.5s ease;
+        position: relative;
+        color: white;
+      }
+
+      .barLogo {
+        height: 40px;
+        border-radius: 3px;
+      }
+
+      .title {
+        font-size: 24px;
+        text-align: center;
+        text-transform: capitalize;
+      }
+
+      @media (max-width: 1000px) {
+        #btnMenu {
+          display: initial;
+        }
+        #leftDrawer {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -300px;
+          box-shadow: 2px 0 10px -1px rgba(0, 0, 0, 0.6);
+          z-index: 1;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .toolbar {
+          padding: 0 5px;
+        }
+        .title {
+          font-size: 20px;
+        }
+      }
     </style>
+
     <hash-router id="router" on-route-change="onRouteChange"></hash-router>
-    <div id="shell" class="vertical layout">
-      <div class="horizontal layout center toolbar">
-        <div class="flex title">{{pageTitle}}</div>
-      </div>
-      <div class="flex" style="position: relative;">
-        <div id="contentPanel" class="fillContainer verticalScroll">
-          <div>
-            <home-page id="home" class="page home" data-href="home/home-page.html"></home-page>
-            <channel-list-page class="list page" data-href="channel/channel-list-page.html"></channel-list-page>
-            <create-chat-page class="new-channel page" data-href="chat/create-chat-page.html"></create-chat-page>
+
+    <div id="shell" class="horizontal layout">
+      <div id="leftDrawer">
+        <div class="fillContainer verticalScroll">
+          <div class="horizontal layout center toolbar">
+            <div>
+              <img class="barLogo" src="/images/logos/logo_white_60.png">
+            </div>
+            <div class="flex"></div>
+          </div>
+          <div id="drawerContent">
+            <channel-list></channel-list>
           </div>
         </div>
       </div>
-      <!--<home-page id="home" class="page home" data-href="home/home-page.html"></home-page>
-      <channel-page class="page channel" data-href="channel/channel-page.html"></channel-page>-->
+
+      <div class="flex vertical layout" style="position: relative;">
+        <div class="horizontal layout center toolbar">
+          <div id="btnMenu">
+            <iron-icon icon="braid:menu" on-click="showMenu"></iron-icon>
+          </div>
+          <div class="flex title">{{pageTitle}}</div>
+        </div>
+        <div class="flex" style="position: relative;">
+          <div id="contentPanel" class="fillContainer verticalScroll">
+            <div>
+              <home-page id="home" class="page home" data-href="home/home-page.html"></home-page>
+              <create-chat-page class="new-channel page" data-href="chat/create-chat-page.html"></create-chat-page>
+            </div>
+          </div>
+        </div>
+        <div id="glass" class="fillContainer" on-click="closeMenu" style="display: none;"></div>
+      </div>
     </div>
   </template>
   <script src="lib/channel-elements-lib.js"></script>

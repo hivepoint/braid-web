@@ -61,16 +61,16 @@
         <x-card>
           <div class="content">
             <label>Service Provider</label>
-            <input type="text" id="txtProvder" placeholder="Enter the provider URL">
+            <input type="text" id="txtProvider" placeholder="Enter the provider URL" on-input="onInput">
             <label style="margin-top: 25px;">Channel name</label>
-            <input type="text" id="txtChannel" placeholder="Enter a name">
+            <input type="text" id="txtChannel" placeholder="Enter a name" on-input="onInput">
             <div class="buttons horizontal layout center">
               <div class="flex"></div>
               <div>
                 <x-button on-click="onCancel">Cancel</x-button>
               </div>
               <div>
-                <x-button on-click="onCreate">Create Channel</x-button>
+                <x-button id="btnCreate" on-click="onCreate">Create Channel</x-button>
               </div>
             </div>
           </div>

@@ -10,6 +10,15 @@ class BraidApp extends Polymer.Element {
     super.connectedCallback();
     window.$router = this.$.router;
     window.$channels = new ChannelsClient();
+
+    window.addEventListener("resize", () => {
+      this.needsLayout();
+    });
+    Polymer.RenderStatus.beforeNextRender(this, () => {
+      this.refreshLayout();
+    });
+
+    Polymer.importHref(this.resolveUrl('channel/channel-list.html'));
   }
 
   onRouteChange(event) {
@@ -56,6 +65,39 @@ class BraidApp extends Polymer.Element {
     // scroll to the top after every page transition
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+  }
+
+  showMenu() {
+    this.$.glass.style.display = "";
+    this.$.leftDrawer.style.left = 0;
+  }
+
+  closeMenu() {
+    this.$.glass.style.display = "none";
+    this.$.leftDrawer.style.left = "";
+  }
+
+  needsLayout() {
+    if (this.layoutPending) {
+      return;
+    }
+    if (this.layoutDebouncing) {
+      this.layoutPending = true;
+      return;
+    }
+    this.refreshLayout();
+    this.layoutDebouncing = true;
+    setTimeout(() => {
+      this.layoutDebouncing = false;
+      if (this.layoutPending) {
+        this.refreshLayout();
+      }
+      this.layoutPending = false;
+    }, 600);
+  }
+
+  refreshLayout() {
+    this.closeMenu();
   }
 }
 

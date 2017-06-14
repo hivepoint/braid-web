@@ -1,13 +1,16 @@
+<link rel="import" href="../common/x-button.html">
 <dom-module id="home-page">
   <template>
     <style>
-       :host {
-        padding: 20px;
+      .buttons {
+        padding: 15px;
+        margin-top: 30px;
         text-align: center;
-        display: block;
       }
     </style>
-    <a href="#list">List</a>
+    <div class="buttons">
+      <x-button on-click="onCreate">Create a new channel</x-button>
+    </div>
   </template>
   <script src="home-page.js"></script>
 </dom-module>
