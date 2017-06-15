@@ -1,0 +1,35 @@
+<dom-module id="chat-message">
+  <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+      .container {
+        margin: 0 auto;
+        padding: 20px 15px;
+      }
+    </style>
+    <div class="container">
+      <div>{{data.text}}</div>
+    </div>
+  </template>
+  <script>
+    class ChatMessage extends Polymer.Element {
+      static get is() { return "chat-message"; }
+      static get properties() {
+        return {
+          message: {
+            type: Object,
+            observer: 'onMessage'
+          },
+          data: Object
+        };
+      }
+
+      onMessage() {
+        if (this.message) {
+          const payloadString = new TextDecoder('utf-8').decode(this.message.rawPayload);
+          this.set("data", JSON.parse(payloadString));
+        }
+      }
+    }
+    window.customElements.define(ChatMessage.is, ChatMessage);
+  </script>
+</dom-module>

@@ -1,12 +1,55 @@
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../chat/chat-compose.html">
+<link rel="import" href="../chat/chat-message.html">
+
 <dom-module id="channel-page">
   <template>
     <style is="custom-style" include="iron-flex iron-flex-alignment">
-       :host {
-        text-align: center;
-        padding: 40px 20px;
+      .fillContainer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+      }
+
+      .verticalScroll {
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .composeArea {
+        border-top: 1px solid #e5e5e5;
+        position: relative;
+      }
+
+      #scrollPanel {
+        background: white;
+      }
+
+      #composeGlass {
+        background: white;
+        opacity: 1;
+        transition: opacity 0.3s ease;
       }
     </style>
-    <h1>Channel page</h1>
+    <div class="fillContainer vertical layout">
+      <div class="flex" style="position: relative;">
+        <div id="scrollPanel" class="fillContainer verticalScroll">
+          <div>
+            <template is="dom-repeat" items="{{items}}">
+              <chat-message message="{{item}}"></chat-message>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div class="composeArea">
+        <chat-compose id="compose" on-compose="onCompose"></chat-compose>
+        <div id="composeGlass" class="fillContainer"></div>
+      </div>
+    </div>
   </template>
   <script src="channel-page.js"></script>
 </dom-module>

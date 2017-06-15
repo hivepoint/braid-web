@@ -14,19 +14,20 @@ class CreateChatPage extends Polymer.Element {
 
   onInput() {
     const provider = this.$.txtProvider.value.trim();
-    const name = this.$.txtChannel.value.trim();
-    this.$.btnCreate.disabled = !(provider && name);
+    const channel = this.$.txtChannel.value.trim();
+    const name = this.$.txtName.value.trim();
+    this.$.btnCreate.disabled = !(provider && channel && name);
   }
 
   onCreate() {
     const provider = this.$.txtProvider.value.trim();
-    const name = this.$.txtChannel.value.trim();
-    if (provider && name) {
+    const channel = this.$.txtChannel.value.trim();
+    const name = this.$.txtName.value.trim();
+    if (provider && channel && name) {
       $channels.register(provider, {}).then((registry) => {
         $channels.createChannel(registry.services.registrationUrl, {
-          details: {
-            name: name
-          }
+          channelDetails: { name: channel },
+          participantDetails: { name: name }
         }).then((channelInfo) => {
           $router.goto(['channel', channelInfo.channelUrl, channelInfo.registerUrl], channelInfo);
         });

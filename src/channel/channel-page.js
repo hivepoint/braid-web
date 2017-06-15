@@ -2,7 +2,10 @@ class ChannelPage extends Polymer.Element {
   static get is() { return 'channel-page'; }
   static get properties() {
     return {
-      items: Array,
+      items: {
+        type: Array,
+        value: function() { return []; }
+      },
       channelInfo: {
         type: Object,
         observer: 'refreshChannel'
@@ -35,10 +38,31 @@ class ChannelPage extends Polymer.Element {
     if (!this.channelInfo) {
       return;
     }
-    console.log("Channel info: ", this.channelInfo);
-    $channels.connectTransport(this.channelInfo.registerUrl, this.channelInfo.transportUrl).then(() => {
-      console.log("Socket connected");
+    this.$.composeGlass.style.opacity = 1;
+    this.$.composeGlass.style.display = "";
+    $channels.connectTransport(this.channelInfo.registerUrl, this.channelInfo.channelId, this.channelInfo.transportUrl).then(() => {
+      $channels.joinChannel({ channelId: this.channelInfo.channelId }).then((joinResponse) => {
+        this.joinData = joinResponse;
+        this.$.composeGlass.style.opacity = 0;
+        setTimeout(() => {
+          this.$.composeGlass.style.display = "none";
+        }, 300);
+        this.refreshContent();
+      }).catch((err) => {
+        console.error(err);
+      });
     });
+  }
+
+  refreshContent() {
+  }
+
+  onCompose(event) {
+    const detail = event.detail;
+    $channels.sendMessage(this.channelInfo.channelId, detail.message, detail.history, detail.priority).then((messageInfo) => {
+      this.push('items', messageInfo);
+    });
+    this.$.compose.clear();
   }
 
 }
