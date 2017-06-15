@@ -32,7 +32,13 @@ class ChannelPage extends Polymer.Element {
   }
 
   refreshChannel() {
+    if (!this.channelInfo) {
+      return;
+    }
     console.log("Channel info: ", this.channelInfo);
+    $channels.connectTransport(this.channelInfo.registerUrl, this.channelInfo.transportUrl).then(() => {
+      console.log("Socket connected");
+    });
   }
 
 }
