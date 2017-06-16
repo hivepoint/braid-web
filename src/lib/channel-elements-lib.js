@@ -665,13 +665,13 @@ var TransportManager = (function () {
                         this.sendControlMessage(info.url, 'ping-reply', {}, controlMessage.requestId);
                         break;
                     case 'history-message': {
-                        if (this.historyCallback) {
+                        if (this.historyMessageHandler) {
                             var binaryMessage = message.controlMessagePayload.binaryPortion;
                             var parsedMessage = interfaces_1.ChannelMessageUtils.parseChannelMessage(binaryMessage);
                             if (parsedMessage && parsedMessage.valid) {
                                 var historyMessageInfo = parsedMessage.info;
                                 try {
-                                    this.historyCallback(historyMessageInfo);
+                                    this.historyMessageHandler(historyMessageInfo);
                                 }
                                 catch (ex) { }
                             }
@@ -690,8 +690,15 @@ var TransportManager = (function () {
         }
         else {
             // Not a control message
-            // TODO: 
-            console.log("Message received", message);
+            if (this.channelMessageHandler) {
+                try {
+                    this.channelMessageHandler(message);
+                }
+                catch (ex) { }
+            }
+            else {
+                console.log("Channel message received", message);
+            }
         }
     };
     return TransportManager;
@@ -4163,9 +4170,10 @@ var ChannelsClientImpl = (function () {
         this.joinedChannels = {};
         this.joinedChannelsByCode = {};
         this.historyCallbacks = {};
+        this.channelMessageCallbacks = {};
         this.db = new db_1.ClientDb();
         this.transport = new transport_manager_1.TransportManager();
-        this.transport.historyCallback = function (message, err) {
+        this.transport.historyMessageHandler = function (message, err) {
             if (!err) {
                 var joinInfo = _this.joinedChannelsByCode[message.channelCode];
                 if (joinInfo) {
@@ -4173,6 +4181,23 @@ var ChannelsClientImpl = (function () {
                     if (cbList) {
                         for (var _i = 0, cbList_1 = cbList; _i < cbList_1.length; _i++) {
                             var cb = cbList_1[_i];
+                            try {
+                                cb(message);
+                            }
+                            catch (er) { }
+                        }
+                    }
+                }
+            }
+        };
+        this.transport.channelMessageHandler = function (message, err) {
+            if (!err) {
+                var joinInfo = _this.joinedChannelsByCode[message.channelCode];
+                if (joinInfo) {
+                    var cbList = _this.channelMessageCallbacks[joinInfo.channelId];
+                    if (cbList) {
+                        for (var _i = 0, cbList_2 = cbList; _i < cbList_2.length; _i++) {
+                            var cb = cbList_2[_i];
                             try {
                                 cb(message);
                             }
@@ -4195,7 +4220,33 @@ var ChannelsClientImpl = (function () {
             });
         });
     };
-    ChannelsClientImpl.prototype.addHistoryCallback = function (channelId, cb) {
+    ChannelsClientImpl.prototype.addChannelMessageListener = function (channelId, cb) {
+        if (cb && channelId) {
+            if (!this.channelMessageCallbacks[channelId]) {
+                this.channelMessageCallbacks[channelId] = [];
+            }
+            this.channelMessageCallbacks[channelId].push(cb);
+        }
+    };
+    ChannelsClientImpl.prototype.removeChannelMessageListener = function (channelId, cb) {
+        if (cb && channelId) {
+            var list = this.channelMessageCallbacks[channelId];
+            if (list) {
+                var index = -1;
+                for (var i = 0; i < list.length; i++) {
+                    if (cb == list[i]) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index >= 0) {
+                    list.splice(index, 1);
+                    this.channelMessageCallbacks[channelId] = list;
+                }
+            }
+        }
+    };
+    ChannelsClientImpl.prototype.addHistoryMessageListener = function (channelId, cb) {
         if (cb && channelId) {
             if (!this.historyCallbacks[channelId]) {
                 this.historyCallbacks[channelId] = [];
@@ -4203,7 +4254,7 @@ var ChannelsClientImpl = (function () {
             this.historyCallbacks[channelId].push(cb);
         }
     };
-    ChannelsClientImpl.prototype.removeHistoryCallback = function (channelId, cb) {
+    ChannelsClientImpl.prototype.removeHistoryMessageListener = function (channelId, cb) {
         if (cb && channelId) {
             var list = this.historyCallbacks[channelId];
             if (list) {

@@ -55,8 +55,12 @@ class ChannelPage extends Polymer.Element {
     });
     
     if (this.historyCallback) {
-      $channels.removeHistoryCallback(this.channelInfo.channelId, this.historyCallback);
+      $channels.removeHistoryMessageListener(this.channelInfo.channelId, this.historyCallback);
       this.historyCallback = null;
+    }
+    if (this.messageCallback) {
+      $channels.removeChannelMessageListener(this.channelInfo.channelId, this.messageCallback);
+      this.messageCallback = null;
     }
     $channels.connectTransport(this.channelInfo.registerUrl, this.channelInfo.channelId, this.channelInfo.transportUrl).then(() => {
       $channels.joinChannel({ channelId: this.channelInfo.channelId }).then((joinResponse) => {
@@ -77,16 +81,26 @@ class ChannelPage extends Polymer.Element {
       return;
     }
     this.set("items", []);
+
+    // re-add message handlers
     if (this.historyCallback) {
-      $channels.removeHistoryCallback(this.channelInfo.channelId, this.historyCallback);
+      $channels.removeHistoryMessageListener(this.channelInfo.channelId, this.historyCallback);
       this.historyCallback = null;
     }
-    $channels.addHistoryCallback(this.channelInfo.channelId, (message) => {
+    if (this.messageCallback) {
+      $channels.removeChannelMessageListener(this.channelInfo.channelId, this.messageCallback);
+      this.messageCallback = null;
+    }
+    $channels.addChannelMessageListener(this.channelInfo.channelId, (message) => {
+      this.handleChannelMessage(message);
+    });
+    $channels.addHistoryMessageListener(this.channelInfo.channelId, (message) => {
       if (message) {
         this.push('items', messageInfo);
       }
     });
-    console.log("Calling history");
+
+    // load history
     $channels.getHistory( {
       channelId: this.channelInfo.channelId,
       before: (new Date()).getTime(),
@@ -113,6 +127,10 @@ class ChannelPage extends Polymer.Element {
       console.log("Share code", shareResponse.shareCodeUrl);
       window.alert(shareResponse.shareCodeUrl);
     });
+  }
+
+  handleChannelMessage(message) {
+    this.push('items', message);
   }
 
 }
