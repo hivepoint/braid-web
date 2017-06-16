@@ -48,7 +48,7 @@ class ChannelPage extends Polymer.Element {
           icon: "braid:share",
           name: "Share channel",
           callback: () => {
-            console.log("Action!");
+            this.shareChannel();
           }
         }
       ]
@@ -102,6 +102,17 @@ class ChannelPage extends Polymer.Element {
       this.push('items', messageInfo);
     });
     this.$.compose.clear();
+  }
+
+  shareChannel() {
+    const shareRequest = {
+      channelId: this.channelInfo.channelId,
+      details: {}
+    };
+    $channels.shareChannel(this.channelInfo.registerUrl, shareRequest).then((shareResponse) => {
+      console.log("Share code", shareResponse.shareCodeUrl);
+      window.alert(shareResponse.shareCodeUrl);
+    });
   }
 
 }

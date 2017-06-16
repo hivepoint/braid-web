@@ -113,6 +113,13 @@ class BraidApp extends Polymer.Element {
   refreshLayout() {
     this.closeMenu();
   }
+
+  onAction(event) {
+    const callback = event.model.item.callback;
+    if (callback) {
+      callback();
+    }
+  }
 }
 
 window.customElements.define(BraidApp.is, BraidApp);

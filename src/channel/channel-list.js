@@ -16,17 +16,13 @@ class ChannelList extends Polymer.Element {
 
   refresh() {
     $channels.listAllChannels().then((list) => {
-      if (!list.length) {
-        list = [
-          { details: { name: "Channel one" } },
-          { details: { name: "Channel two" } },
-          { details: { name: "Channel three" } },
-          { details: { name: "Channel four" } },
-          { details: { name: "Channel five" } }
-        ]
-      }
       this.set("list", list);
     });
+  }
+
+  onItemClick(event) {
+    const data = event.model.item;
+    $router.goto(['channel', data.channelUrl, data.registerUrl]);
   }
 }
 window.customElements.define(ChannelList.is, ChannelList);

@@ -191,7 +191,7 @@ var ChannelMessageUtils = (function () {
                     jsonMessage: JSON.parse(jsonString)
                 };
                 if (message.byteLength > this.MESSAGE_HEADER_LENGTH + 4 + jsonLength) {
-                    result.info.controlMessagePayload.binaryPortion = new Uint8Array(message.buffer, message.byteOffset + this.MESSAGE_HEADER_LENGTH + 4 + jsonLength);
+                    result.info.controlMessagePayload.binaryPortion = new Uint8Array(result.info.rawPayload.buffer, result.info.rawPayload.byteOffset + 4 + jsonLength, result.info.rawPayload.byteLength - 4 - jsonLength);
                 }
             }
             catch (err) {
@@ -676,7 +676,7 @@ var TransportManager = (function () {
                                 catch (ex) { }
                             }
                             else {
-                                console.warn("Ignoring history message: Failed to parse.");
+                                console.warn("Ignoring history message: Failed to parse.", parsedMessage ? parsedMessage.errorMessage : "");
                             }
                         }
                         break;
@@ -4315,6 +4315,41 @@ var ChannelsClientImpl = (function () {
                         }
                         headers = { Authorization: utils_1.Utils.createAuth(registry) };
                         return [4 /*yield*/, rest_1.Rest.post(registry.services.shareChannelUrl, request, headers)];
+                    case 3: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    ChannelsClientImpl.prototype.getInviteInfo = function (inviteCode) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, rest_1.Rest.get(inviteCode)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    ChannelsClientImpl.prototype.acceptInvitation = function (inviteCode, identity, participantDetails) {
+        return __awaiter(this, void 0, void 0, function () {
+            var shareCodeResponse, registry, request, headers;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getInviteInfo(inviteCode)];
+                    case 1:
+                        shareCodeResponse = _a.sent();
+                        if (!shareCodeResponse) {
+                            throw new Error("Invalid share code");
+                        }
+                        return [4 /*yield*/, this.register(shareCodeResponse.providerUrl, identity)];
+                    case 2:
+                        registry = _a.sent();
+                        request = {
+                            invitationId: shareCodeResponse.invitationId,
+                            details: participantDetails
+                        };
+                        headers = { Authorization: utils_1.Utils.createAuth(registry) };
+                        return [4 /*yield*/, rest_1.Rest.post(shareCodeResponse.acceptChannelUrl, request, headers)];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
             });

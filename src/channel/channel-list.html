@@ -10,7 +10,7 @@
     </style>
     <div class="container">
       <template is="dom-repeat" items="{{list}}">
-        <channel-list-item data="{{item}}"></channel-list-item>
+        <channel-list-item data="{{item}}" on-click="onItemClick"></channel-list-item>
       </template>
     </div>
   </template>
