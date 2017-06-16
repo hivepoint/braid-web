@@ -12,6 +12,9 @@ class ChannelList extends Polymer.Element {
     Polymer.RenderStatus.beforeNextRender(this, () => {
       this.refresh();
     });
+    window.addEventListener('refresh-channels', () => {
+      this.refresh();
+    });
   }
 
   refresh() {

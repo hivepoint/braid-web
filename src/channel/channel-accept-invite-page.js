@@ -23,6 +23,8 @@ class ChannelAcceptInvitationPage extends Polymer.Element {
     const name = this.$.txtName.value.trim();
     if (inviteUrl &&  name) {
       $channels.acceptInvitation(inviteUrl, {}, {name: name}).then((channelInfo) => {
+        const event = new CustomEvent('refresh-channels', { bubbles: true, composed: true, detail: {} });
+        window.dispatchEvent(event);
         $router.goto(['channel', channelInfo.channelUrl, channelInfo.registerUrl], channelInfo);
       }).catch((err) => {
         console.error("Failed to accept channel invitation: ", err);

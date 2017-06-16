@@ -34,6 +34,50 @@
         opacity: 1;
         transition: opacity 0.3s ease;
       }
+
+      #sharePanel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 10px;
+        background: #263238;
+        color: white;
+        box-shadow: 0 5px 5px -1px rgba(0, 0, 0, 0.4);
+        font-size: 15px;
+      }
+
+      iron-icon {
+        cursor: pointer;
+        padding: 7px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+      }
+
+      iron-icon:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      input {
+        outline: none;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        padding: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+      .codeLabel {
+        padding-right: 10px;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.05em;
+      }
     </style>
     <div class="fillContainer vertical layout">
       <div class="flex" style="position: relative;">
@@ -48,6 +92,15 @@
       <div class="composeArea">
         <chat-compose id="compose" on-compose="onCompose"></chat-compose>
         <div id="composeGlass" class="fillContainer"></div>
+      </div>
+      <div id="sharePanel" class="horizontal layout center" style="display: none;">
+        <div class="codeLabel">Invite code:</div>
+        <div class="flex">
+          <input id="txtCode">
+        </div>
+        <div style="padding-left: 5px;">
+          <iron-icon icon="braid:close" on-click="hideSharePanel"></iron-icon>
+        </div>
       </div>
     </div>
   </template>

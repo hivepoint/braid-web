@@ -29,6 +29,8 @@ class CreateChatPage extends Polymer.Element {
           channelDetails: { name: channel },
           participantDetails: { name: name }
         }).then((channelInfo) => {
+          const event = new CustomEvent('refresh-channels', { bubbles: true, composed: true, detail: {} });
+          window.dispatchEvent(event);
           $router.goto(['channel', channelInfo.channelUrl, channelInfo.registerUrl], channelInfo);
         });
       })

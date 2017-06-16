@@ -452,6 +452,47 @@ var Rest = (function () {
             });
         });
     };
+    Rest.delete = function (url, headers) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        var req = new XMLHttpRequest();
+                        req.withCredentials = false;
+                        req.open("DELETE", url);
+                        if (headers) {
+                            for (var key in headers) {
+                                req.setRequestHeader(key, headers[key]);
+                            }
+                        }
+                        req.setRequestHeader("Content-Type", 'application/json');
+                        req.onload = function (event) {
+                            var status = req.status;
+                            if (status === 0 || status >= 400) {
+                                if (req.responseText) {
+                                    Rest.onError(reject, status, req.responseText);
+                                }
+                                else {
+                                    Rest.onError(reject, status, 'Request failed with code: ' + status);
+                                }
+                            }
+                            else {
+                                if (req.responseText) {
+                                    var result = JSON.parse(req.responseText);
+                                    resolve(result);
+                                }
+                                else {
+                                    resolve(null);
+                                }
+                            }
+                        };
+                        req.onerror = function (err) {
+                            Rest.onError(reject, 0, "There was a network error: " + err.message);
+                        };
+                        req.send();
+                    })];
+            });
+        });
+    };
     Rest.onError = function (reject, code, message) {
         reject({
             status: code,
@@ -4176,6 +4217,7 @@ var ChannelsClientImpl = (function () {
         this.historyCallbacks = {};
         this.channelMessageCallbacks = {};
         this.channelParticipantListeners = {};
+        this.channelDeletedListeners = [];
         this.db = new db_1.ClientDb();
         this.transport = new transport_manager_1.TransportManager();
         this.transport.historyMessageHandler = function (details, message) {
@@ -4247,6 +4289,19 @@ var ChannelsClientImpl = (function () {
                 }
                 break;
             }
+            case 'channel-deleted': {
+                var notification = controlMessage.details;
+                if (notification) {
+                    for (var _b = 0, _c = this.channelDeletedListeners; _b < _c.length; _b++) {
+                        var l = _c[_b];
+                        try {
+                            l(notification);
+                        }
+                        catch (er) { }
+                    }
+                }
+                break;
+            }
             default: break;
         }
     };
@@ -4261,6 +4316,25 @@ var ChannelsClientImpl = (function () {
                 }
             });
         });
+    };
+    ChannelsClientImpl.prototype.addChannelDeletedListener = function (listener) {
+        if (listener) {
+            this.channelDeletedListeners.push(listener);
+        }
+    };
+    ChannelsClientImpl.prototype.removeChannelDeletedListener = function (listener) {
+        if (listener) {
+            var index = -1;
+            for (var i = 0; i < this.channelDeletedListeners.length; i++) {
+                if (listener == this.channelDeletedListeners[i]) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index >= 0) {
+                this.channelDeletedListeners.splice(index, 1);
+            }
+        }
     };
     ChannelsClientImpl.prototype.addChannelParticipantListener = function (channelId, cb) {
         if (channelId && cb) {
@@ -4576,6 +4650,27 @@ var ChannelsClientImpl = (function () {
                         }
                         headers = { Authorization: utils_1.Utils.createAuth(registry) };
                         return [4 /*yield*/, rest_1.Rest.get(channelUrl, headers)];
+                    case 3: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    ChannelsClientImpl.prototype.deleteChannel = function (registryUrl, channelDeleteUrl) {
+        return __awaiter(this, void 0, void 0, function () {
+            var registry, headers;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.ensureDb()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.db.getRegistry(registryUrl)];
+                    case 2:
+                        registry = _a.sent();
+                        if (!registry) {
+                            throw new Error("Failed to delete channel: Provider is not registered");
+                        }
+                        headers = { Authorization: utils_1.Utils.createAuth(registry) };
+                        return [4 /*yield*/, rest_1.Rest.delete(channelDeleteUrl, headers)];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
             });

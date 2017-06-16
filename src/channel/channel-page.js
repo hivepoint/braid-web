@@ -4,7 +4,7 @@ class ChannelPage extends Polymer.Element {
     return {
       items: {
         type: Array,
-        value: function() { return []; }
+        value: function () { return []; }
       },
       channelInfo: {
         type: Object,
@@ -31,7 +31,7 @@ class ChannelPage extends Polymer.Element {
     this._active = false;
     this.removeCallbacks();
     if (this.joinData) {
-      $channels.leaveChannel({channelId: this.joinData.channelId}).then(() => {});
+      $channels.leaveChannel({ channelId: this.joinData.channelId }).then(() => { });
       this.joinData = null;
     }
   }
@@ -59,6 +59,10 @@ class ChannelPage extends Polymer.Element {
       $channels.removeChannelParticipantListener(this.channelInfo.channelId, this.participantCallback);
       this.participantCallback = null;
     }
+    if (this.deleteChannelCallback) {
+      $channels.removeChannelDeletedListener(this.deleteChannelCallback);
+      this.deleteChannelCallback = null;
+    }
   }
 
   refreshChannel() {
@@ -68,19 +72,28 @@ class ChannelPage extends Polymer.Element {
     this.$.composeGlass.style.opacity = 1;
     this.$.composeGlass.style.display = "";
 
+    // update the app toolbar
+    const barActions = [{
+      icon: "braid:share",
+      name: "Share channel",
+      callback: () => {
+        this.shareChannel();
+      }
+    }];
+    if (this.channelInfo.isCreator) {
+      barActions.push({
+        icon: "braid:delete",
+        name: "Delete channel",
+        callback: () => {
+          this.deleteChannel();
+        }
+      });
+    }
     $app.setBarData({
       title: this.channelInfo.details.name,
-      actions: [
-        {
-          icon: "braid:share",
-          name: "Share channel",
-          callback: () => {
-            this.shareChannel();
-          }
-        }
-      ]
+      actions: barActions
     });
-    
+
     this.removeCallbacks();
     $channels.connectTransport(this.channelInfo.registerUrl, this.channelInfo.channelId, this.channelInfo.transportUrl).then(() => {
       $channels.joinChannel({ channelId: this.channelInfo.channelId }).then((joinResponse) => {
@@ -110,7 +123,7 @@ class ChannelPage extends Polymer.Element {
       let p = this.channelInfo.recentlyActiveMembers[i];
       this.participantById[p.participantId] = p;
     }
-    for (var i = 0; i < this.joinData.participants.length; i ++) {
+    for (var i = 0; i < this.joinData.participants.length; i++) {
       let p = this.joinData.participants[i];
       this.participantByCode[p.code] = p;
     }
@@ -126,12 +139,23 @@ class ChannelPage extends Polymer.Element {
     this.participantCallback = (joined, left) => {
       this.handleParticipant(joined, left);
     };
+    this.deleteChannelCallback = (notification) => {
+      const chid = notification.channelId;
+      if (this.channelInfo) {
+        if (chid === this.channelInfo.channelId) {
+          $router.goto("");
+        }
+      }
+      const event = new CustomEvent('refresh-channels', { bubbles: true, composed: true, detail: {} });
+      window.dispatchEvent(event);
+    };
     $channels.addChannelMessageListener(this.channelInfo.channelId, this.messageCallback);
     $channels.addHistoryMessageListener(this.channelInfo.channelId, this.historyCallback);
     $channels.addChannelParticipantListener(this.channelInfo.channelId, this.participantCallback);
+    $channels.addChannelDeletedListener(this.deleteChannelCallback);
 
     // load history
-    $channels.getHistory( {
+    $channels.getHistory({
       channelId: this.channelInfo.channelId,
       before: (new Date()).getTime(),
       maxCount: 100
@@ -158,9 +182,20 @@ class ChannelPage extends Polymer.Element {
       details: {}
     };
     $channels.shareChannel(this.channelInfo.registerUrl, shareRequest).then((shareResponse) => {
-      console.log("Share code", shareResponse.shareCodeUrl);
-      window.alert(shareResponse.shareCodeUrl);
+      this.$.txtCode.value = shareResponse.shareCodeUrl;
+      this.$.sharePanel.style.display = "";
+      setTimeout(() => {
+        this.$.txtCode.select();
+      }, 50);
     });
+  }
+
+  hideSharePanel() {
+    this.$.sharePanel.style.display = "none";
+  }
+
+  deleteChannel() {
+    $channels.deleteChannel(this.channelInfo.registerUrl, this.channelInfo.channelUrl).then(() => { });
   }
 
   handleChannelMessage(message) {
