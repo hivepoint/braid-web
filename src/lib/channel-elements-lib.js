@@ -171,12 +171,12 @@ var ChannelMessageUtils = (function () {
         var topBytes = view.getUint16(0);
         var bottomBytes = view.getUint32(2);
         result.info.timestamp = topBytes * Math.pow(2, 32) + bottomBytes;
-        var delta = Date.now() - result.info.timestamp;
-        if (Math.abs(delta) > 15000) {
-            result.valid = false;
-            result.errorMessage = "Clocks are too far out of sync, or message timestamp is invalid";
-            return result;
-        }
+        // const delta = Date.now() - result.info.timestamp;
+        // if (Math.abs(delta) > 15000) {
+        //   result.valid = false;
+        //   result.errorMessage = "Clocks are too far out of sync, or message timestamp is invalid";
+        //   return result;
+        // }
         result.info.channelCode = view.getUint32(6);
         result.info.senderCode = view.getUint32(10);
         var behavior = view.getUint8(14);
@@ -662,6 +662,7 @@ var TransportManager = (function () {
                 // This library will try to handle the message or fire the appropriate events
                 switch (controlMessage.type) {
                     case 'ping':
+                        console.log("Ping received: ", controlMessage.requestId);
                         this.sendControlMessage(info.url, 'ping-reply', {}, controlMessage.requestId);
                         break;
                     case 'history-message': {
@@ -671,7 +672,7 @@ var TransportManager = (function () {
                             if (parsedMessage && parsedMessage.valid) {
                                 var historyMessageInfo = parsedMessage.info;
                                 try {
-                                    this.historyMessageHandler(historyMessageInfo);
+                                    this.historyMessageHandler(message.controlMessagePayload.jsonMessage.details, historyMessageInfo);
                                 }
                                 catch (ex) { }
                             }
@@ -682,8 +683,12 @@ var TransportManager = (function () {
                         break;
                     }
                     default:
-                        // TODO: 
-                        console.log("Control Message received", controlMessage);
+                        if (this.controlMessageHandler) {
+                            try {
+                                this.controlMessageHandler(message);
+                            }
+                            catch (ex) { }
+                        }
                         break;
                 }
             }
@@ -4171,21 +4176,20 @@ var ChannelsClientImpl = (function () {
         this.joinedChannelsByCode = {};
         this.historyCallbacks = {};
         this.channelMessageCallbacks = {};
+        this.channelParticipantListeners = {};
         this.db = new db_1.ClientDb();
         this.transport = new transport_manager_1.TransportManager();
-        this.transport.historyMessageHandler = function (message, err) {
-            if (!err) {
-                var joinInfo = _this.joinedChannelsByCode[message.channelCode];
-                if (joinInfo) {
-                    var cbList = _this.historyCallbacks[joinInfo.channelId];
-                    if (cbList) {
-                        for (var _i = 0, cbList_1 = cbList; _i < cbList_1.length; _i++) {
-                            var cb = cbList_1[_i];
-                            try {
-                                cb(message);
-                            }
-                            catch (er) { }
+        this.transport.historyMessageHandler = function (details, message) {
+            var joinInfo = _this.joinedChannelsByCode[message.channelCode];
+            if (joinInfo) {
+                var cbList = _this.historyCallbacks[joinInfo.channelId];
+                if (cbList) {
+                    for (var _i = 0, cbList_1 = cbList; _i < cbList_1.length; _i++) {
+                        var cb = cbList_1[_i];
+                        try {
+                            cb(details, message);
                         }
+                        catch (er) { }
                     }
                 }
             }
@@ -4207,7 +4211,46 @@ var ChannelsClientImpl = (function () {
                 }
             }
         };
+        this.transport.controlMessageHandler = function (message, err) {
+            if (!err) {
+                _this.handleControlMessage(message);
+            }
+        };
     }
+    ChannelsClientImpl.prototype.handleControlMessage = function (message) {
+        var controlMessage = message.controlMessagePayload.jsonMessage;
+        switch (controlMessage.type) {
+            case 'join-notification': {
+                var joinNotification = controlMessage.details;
+                var cbList = this.channelParticipantListeners[joinNotification.channelId];
+                if (cbList) {
+                    for (var _i = 0, cbList_3 = cbList; _i < cbList_3.length; _i++) {
+                        var cb = cbList_3[_i];
+                        try {
+                            cb(joinNotification, null);
+                        }
+                        catch (er) { }
+                    }
+                }
+                break;
+            }
+            case 'leave-notification': {
+                var leaveNotification = controlMessage.details;
+                var cbList = this.channelParticipantListeners[leaveNotification.channelId];
+                if (cbList) {
+                    for (var _a = 0, cbList_4 = cbList; _a < cbList_4.length; _a++) {
+                        var cb = cbList_4[_a];
+                        try {
+                            cb(null, leaveNotification);
+                        }
+                        catch (er) { }
+                    }
+                }
+                break;
+            }
+            default: break;
+        }
+    };
     ChannelsClientImpl.prototype.ensureDb = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -4219,6 +4262,32 @@ var ChannelsClientImpl = (function () {
                 }
             });
         });
+    };
+    ChannelsClientImpl.prototype.addChannelParticipantListener = function (channelId, cb) {
+        if (channelId && cb) {
+            if (!this.channelParticipantListeners[channelId]) {
+                this.channelParticipantListeners[channelId] = [];
+            }
+            this.channelParticipantListeners[channelId].push(cb);
+        }
+    };
+    ChannelsClientImpl.prototype.removeChannelParticipantListener = function (channelId, cb) {
+        if (cb && channelId) {
+            var list = this.channelParticipantListeners[channelId];
+            if (list) {
+                var index = -1;
+                for (var i = 0; i < list.length; i++) {
+                    if (cb == list[i]) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index >= 0) {
+                    list.splice(index, 1);
+                    this.channelParticipantListeners[channelId] = list;
+                }
+            }
+        }
     };
     ChannelsClientImpl.prototype.addChannelMessageListener = function (channelId, cb) {
         if (cb && channelId) {
@@ -4561,6 +4630,23 @@ var ChannelsClientImpl = (function () {
                                 _this.joinedChannels[request.channelId] = joinResponse;
                                 _this.joinedChannelsByCode[joinResponse.channelCode] = joinResponse;
                                 resolve(joinResponse);
+                            }
+                        });
+                    })];
+            });
+        });
+    };
+    ChannelsClientImpl.prototype.leaveChannel = function (request) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        _this.transport.sendControlMessageByChannel(request.channelId, 'leave', request, function (message, err) {
+                            if (err) {
+                                reject(err);
+                            }
+                            else {
+                                resolve();
                             }
                         });
                     })];
