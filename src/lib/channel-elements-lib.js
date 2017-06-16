@@ -662,7 +662,6 @@ var TransportManager = (function () {
                 // This library will try to handle the message or fire the appropriate events
                 switch (controlMessage.type) {
                     case 'ping':
-                        console.log("Ping received: ", controlMessage.requestId);
                         this.sendControlMessage(info.url, 'ping-reply', {}, controlMessage.requestId);
                         break;
                     case 'history-message': {
