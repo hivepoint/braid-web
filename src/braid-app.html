@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="braid-icons.html">
 
 <dom-module id="braid-app">
@@ -128,7 +129,12 @@
           <div id="btnMenu">
             <iron-icon icon="braid:menu" on-click="showMenu"></iron-icon>
           </div>
-          <div class="flex title">{{pageTitle}}</div>
+          <div class="flex title">{{barData.title}}</div>
+          <div>
+            <template is="dom-repeat" items="{{barData.actions}}">
+              <iron-icon icon="{{item.icon}}" title$="{{item.name}}" on-click="onAction"></iron-icon>
+            </template>
+          </div>
         </div>
         <div class="flex" style="position: relative;">
           <div id="contentPanel" class="fillContainer verticalScroll">

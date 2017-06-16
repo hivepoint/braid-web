@@ -473,10 +473,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var interfaces_1 = __webpack_require__(0);
 var TransportManager = (function () {
     function TransportManager() {
+        this.counters = {};
         this.sockets = {};
         this.socketsById = {};
         this.controlCallbacks = {};
-        this.counters = {};
     }
     TransportManager.prototype.connect = function (channelId, url) {
         var _this = this;
@@ -664,6 +664,23 @@ var TransportManager = (function () {
                     case 'ping':
                         this.sendControlMessage(info.url, 'ping-reply', {}, controlMessage.requestId);
                         break;
+                    case 'history-message': {
+                        if (this.historyCallback) {
+                            var binaryMessage = message.controlMessagePayload.binaryPortion;
+                            var parsedMessage = interfaces_1.ChannelMessageUtils.parseChannelMessage(binaryMessage);
+                            if (parsedMessage && parsedMessage.valid) {
+                                var historyMessageInfo = parsedMessage.info;
+                                try {
+                                    this.historyCallback(historyMessageInfo);
+                                }
+                                catch (ex) { }
+                            }
+                            else {
+                                console.warn("Ignoring history message: Failed to parse.");
+                            }
+                        }
+                        break;
+                    }
                     default:
                         // TODO: 
                         console.log("Control Message received", controlMessage);
@@ -4142,9 +4159,29 @@ var transport_manager_1 = __webpack_require__(3);
 __export(__webpack_require__(0));
 var ChannelsClientImpl = (function () {
     function ChannelsClientImpl() {
+        var _this = this;
         this.joinedChannels = {};
+        this.joinedChannelsByCode = {};
+        this.historyCallbacks = {};
         this.db = new db_1.ClientDb();
         this.transport = new transport_manager_1.TransportManager();
+        this.transport.historyCallback = function (message, err) {
+            if (!err) {
+                var joinInfo = _this.joinedChannelsByCode[message.channelCode];
+                if (joinInfo) {
+                    var cbList = _this.historyCallbacks[joinInfo.channelId];
+                    if (cbList) {
+                        for (var _i = 0, cbList_1 = cbList; _i < cbList_1.length; _i++) {
+                            var cb = cbList_1[_i];
+                            try {
+                                cb(message);
+                            }
+                            catch (er) { }
+                        }
+                    }
+                }
+            }
+        };
     }
     ChannelsClientImpl.prototype.ensureDb = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -4157,6 +4194,32 @@ var ChannelsClientImpl = (function () {
                 }
             });
         });
+    };
+    ChannelsClientImpl.prototype.addHistoryCallback = function (channelId, cb) {
+        if (cb && channelId) {
+            if (!this.historyCallbacks[channelId]) {
+                this.historyCallbacks[channelId] = [];
+            }
+            this.historyCallbacks[channelId].push(cb);
+        }
+    };
+    ChannelsClientImpl.prototype.removeHistoryCallback = function (channelId, cb) {
+        if (cb && channelId) {
+            var list = this.historyCallbacks[channelId];
+            if (list) {
+                var index = -1;
+                for (var i = 0; i < list.length; i++) {
+                    if (cb == list[i]) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index >= 0) {
+                    list.splice(index, 1);
+                    this.historyCallbacks[channelId] = list;
+                }
+            }
+        }
     };
     ChannelsClientImpl.prototype.register = function (serverUrl, identity) {
         return __awaiter(this, void 0, void 0, function () {
@@ -4236,10 +4299,24 @@ var ChannelsClientImpl = (function () {
             });
         });
     };
-    ChannelsClientImpl.prototype.connectToChannel = function (channelCodeUrl) {
+    ChannelsClientImpl.prototype.shareChannel = function (registerUrl, request) {
         return __awaiter(this, void 0, void 0, function () {
+            var registry, headers;
             return __generator(this, function (_a) {
-                return [2 /*return*/, null];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.ensureDb()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.db.getRegistry(registerUrl)];
+                    case 2:
+                        registry = _a.sent();
+                        if (!registry) {
+                            throw new Error("Failed to create channel: Provider is not registered");
+                        }
+                        headers = { Authorization: utils_1.Utils.createAuth(registry) };
+                        return [4 /*yield*/, rest_1.Rest.post(registry.services.shareChannelUrl, request, headers)];
+                    case 3: return [2 /*return*/, _a.sent()];
+                }
             });
         });
     };
@@ -4396,6 +4473,7 @@ var ChannelsClientImpl = (function () {
                                 var controlMessage = message.controlMessagePayload.jsonMessage;
                                 var joinResponse = controlMessage.details;
                                 _this.joinedChannels[request.channelId] = joinResponse;
+                                _this.joinedChannelsByCode[joinResponse.channelCode] = joinResponse;
                                 resolve(joinResponse);
                             }
                         });
@@ -4403,6 +4481,32 @@ var ChannelsClientImpl = (function () {
             });
         });
     };
+    ChannelsClientImpl.prototype.getHistory = function (request) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        var channelId = request.channelId;
+                        var joinInfo = _this.joinedChannels[channelId];
+                        if (!joinInfo) {
+                            reject(new Error("Trying to fetch history of an unjoined channel"));
+                            return;
+                        }
+                        _this.transport.sendControlMessageByChannel(channelId, 'history', request, function (message, err) {
+                            if (err) {
+                                reject(err);
+                            }
+                            else {
+                                var controlMessage = message.controlMessagePayload.jsonMessage;
+                                var historyResponse = controlMessage.details;
+                                resolve(historyResponse);
+                            }
+                        });
+                    })];
+            });
+        });
+    };
+    ;
     ChannelsClientImpl.prototype.sendMessage = function (channelId, message, history, priority) {
         if (history === void 0) { history = false; }
         if (priority === void 0) { priority = false; }

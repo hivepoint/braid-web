@@ -1,9 +1,20 @@
 class BraidApp extends Polymer.Element {
   static get is() { return 'braid-app'; }
 
+  static get properties() {
+    return {
+      barData: Object
+    };
+  }
+
   constructor() {
     super();
     this.lastActivePage = null;
+    window.$app = this;
+  }
+
+  setBarData(data) {
+    this.set("barData", data);
   }
 
   connectedCallback() {
@@ -38,6 +49,9 @@ class BraidApp extends Polymer.Element {
       pageName = "home";
     }
     activePage.style.display = "";
+
+    // clear toolbar
+    this.setBarData(null);
 
     // Notify prev page it's being hidden
     if (this.lastActivePage) {
